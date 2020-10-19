@@ -48,7 +48,7 @@ class Mention {
       positioningStrategy: "normal",
       defaultMenuOrientation: "bottom",
       blotName: "mention",
-      dataAttributes: ["id", "value", "denotationChar", "link", "target", "disabled"],
+      dataAttributes: ["id", "value", "denotationChar", "link", "target", "disabled", "searchTerm"],
       linkTarget: "_blank",
       onOpen() {
         return true;
@@ -275,9 +275,12 @@ class Mention {
 
     if (!programmaticInsert) {
       insertAtPos = this.mentionCharPos;
+      if (render.denotationChar == " " && insertAtPos != 0) {
+        insertAtPos += 1;
+      }
       this.quill.deleteText(
-        this.mentionCharPos,
-        this.cursorPos - this.mentionCharPos,
+        insertAtPos,
+        this.cursorPos - insertAtPos,
         Quill.sources.USER
       );
     } else {
@@ -286,9 +289,7 @@ class Mention {
 
     if (this.options.blotName == 'text') {
       var text = render.value;
-      if (render.denotationChar == ' ' && insertAtPos != 0)
-        text = render.denotationChar + text;
-      this.quill.insertText(insertAtPos, text, Quill.sources.USER);
+      this.quill.insertText(insertAtPos, text, this.deltaAttributes, Quill.sources.USER);
       insertAtPos += text.length - 1;
     } else {
       this.quill.insertEmbed(insertAtPos, this.options.blotName, render, Quill.sources.USER);
@@ -397,6 +398,7 @@ class Mention {
           li.onmouseenter = this.onDisabledItemMouseEnter.bind(this);
         }
         li.dataset.denotationChar = mentionChar;
+        data[i].searchTerm = searchTerm;
         this.mentionList.appendChild(
           attachDataValues(li, data[i], this.options.dataAttributes)
         );
@@ -721,6 +723,18 @@ class Mention {
   }
 
   onTextChange(delta, oldDelta, source) {
+    if (this.options.blotName == 'text') {
+      this.deltaAttributes = {};
+      const ops = oldDelta["ops"];
+      if (delta["ops"]) {
+        for (i = 0; i < ops.length; i++) {
+          if (ops[i]["attributes"]) {
+            this.deltaAttributes = ops[i]["attributes"];
+            break;
+          }
+        }
+      }
+    }
     if (source === "user") {
       this.onSomethingChange();
     }

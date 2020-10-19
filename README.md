@@ -1,10 +1,11 @@
 ![Quill Mention](docs/static/quill-mention.png "Quill Mention")
 
-# Quill Mention
+# Quill Auto-Complete
 
 [![npm version](https://badge.fury.io/js/quill-mention.svg)](https://badge.fury.io/js/quill-mention)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+Quill Auto-Complete is an experimental fork of [Quill Mention](https://github.com/afry/quill-mention) to add auto-complete functionality.  
 Quill Mention is a module to provide @mentions or #hashtag functionality for the [Quill](https://quilljs.com/) rich text editor.
 
 ## Demo
@@ -135,6 +136,11 @@ const quill = new Quill("#editor", {
   }
 });
 ```
+
+### Support for auto-complete
+
+- Set the option: `mentionDenotationChars: [" "]` and `blotName: "text"`
+- To enable auto-insertion of suggestion when space bar is hit, enable: `autoSelectOnSpace: true`
 
 ### Settings
 
