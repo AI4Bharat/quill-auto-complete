@@ -110,6 +110,18 @@ class Mention {
       quill.keyboard.bindings[Keys.ENTER].pop()
     );
 
+    if (this.options.autoSelectOnSpace) {
+      quill.keyboard.addBinding(
+        {
+          key: Keys.SPACE
+        },
+        this.selectHandler.bind(this)
+      );
+      quill.keyboard.bindings[Keys.SPACE].unshift(
+        quill.keyboard.bindings[Keys.SPACE].pop()
+      );
+    }
+
     quill.keyboard.addBinding(
       {
         key: Keys.ESCAPE
