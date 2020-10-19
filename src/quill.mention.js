@@ -271,7 +271,17 @@ class Mention {
     } else {
       insertAtPos = this.cursorPos;
     }
-    this.quill.insertEmbed(insertAtPos, this.options.blotName, render, Quill.sources.USER);
+
+    if (this.options.blotName == 'text') {
+      var text = render.value;
+      if (render.denotationChar == ' ' && insertAtPos != 0)
+        text = render.denotationChar + text;
+      this.quill.insertText(insertAtPos, text, Quill.sources.USER);
+      insertAtPos += text.length - 1;
+    } else {
+      this.quill.insertEmbed(insertAtPos, this.options.blotName, render, Quill.sources.USER);
+    }
+
     if (this.options.spaceAfterInsert) {
       this.quill.insertText(insertAtPos + 1, " ", Quill.sources.USER);
       // setSelection here sets cursor position
@@ -652,10 +662,10 @@ class Mention {
           mentionCharIndex,
           textBeforeCursor,
           this.options.isolateCharacter
-        )
+        ) || (mentionChar == ' ' && mentionCharIndex == -1)
       ) {
       const mentionCharPos = this.cursorPos - (textBeforeCursor.length - mentionCharIndex);
-      this.mentionCharPos = mentionCharPos;
+      this.mentionCharPos = mentionCharPos < 0 ? 0 : mentionCharPos;
       const textAfter = textBeforeCursor.substring(
         mentionCharIndex + mentionChar.length
       );

@@ -26,7 +26,7 @@ function getMentionCharIndex(text, mentionDenotationChars) {
         mentionCharIndex: prev.mentionCharIndex
       };
     },
-    { mentionChar: null, mentionCharIndex: -1 }
+    { mentionChar: mentionDenotationChars[0] == ' ' ? ' ' : null, mentionCharIndex: -1 }
   );
 }
 
