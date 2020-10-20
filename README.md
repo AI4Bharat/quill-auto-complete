@@ -139,7 +139,7 @@ const quill = new Quill("#editor", {
 
 ### Support for auto-complete
 
-- Set the option: `mentionDenotationChars: [" "]` and `blotName: "text"`
+- Set the option: `mentionDenotationChars: [" ", "\n"]` and `blotName: "text"`
 - To enable auto-insertion of suggestion when space bar is hit, enable: `autoSelectOnSpace: true`
 
 ### Settings

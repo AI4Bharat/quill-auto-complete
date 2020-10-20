@@ -10,6 +10,10 @@ function attachDataValues(element, data, dataAttributes) {
   return mention;
 }
 
+function isMentionCharWhiteSpace(mentionChar) {
+  return (mentionChar == ' ' || mentionChar == '\n');
+}
+
 function getMentionCharIndex(text, mentionDenotationChars) {
   return mentionDenotationChars.reduce(
     (prev, mentionChar) => {
@@ -51,5 +55,6 @@ export {
   attachDataValues,
   getMentionCharIndex,
   hasValidChars,
-  hasValidMentionCharIndex
+  hasValidMentionCharIndex,
+  isMentionCharWhiteSpace
 };

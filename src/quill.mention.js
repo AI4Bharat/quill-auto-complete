@@ -4,7 +4,8 @@ import {
   attachDataValues,
   getMentionCharIndex,
   hasValidChars,
-  hasValidMentionCharIndex
+  hasValidMentionCharIndex,
+  isMentionCharWhiteSpace
 } from "./utils";
 import "./quill.mention.css";
 import "./blots/mention";
@@ -275,7 +276,7 @@ class Mention {
 
     if (!programmaticInsert) {
       insertAtPos = this.mentionCharPos;
-      if (render.denotationChar == " " && insertAtPos != 0) {
+      if (isMentionCharWhiteSpace(render.denotationChar) && insertAtPos != 0) {
         insertAtPos += 1;
       }
       this.quill.deleteText(
@@ -490,7 +491,7 @@ class Mention {
 
   setMentionContainerPosition_Normal() {
     const containerPos = this.quill.container.getBoundingClientRect();
-    const mentionCharPos = this.quill.getBounds(this.mentionCharPos);
+    const mentionCharPos = this.quill.getBounds(this.cursorPos);
     const containerHeight = this.mentionContainer.offsetHeight;
 
     let topPos = this.options.offsetTop;
