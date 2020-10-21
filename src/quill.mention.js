@@ -116,7 +116,7 @@ class Mention {
         {
           key: Keys.SPACE
         },
-        this.selectHandler.bind(this)
+        this.spaceHandler.bind(this)
       );
       quill.keyboard.bindings[Keys.SPACE].unshift(
         quill.keyboard.bindings[Keys.SPACE].pop()
@@ -143,6 +143,12 @@ class Mention {
       },
       this.downHandler.bind(this)
     );
+  }
+
+  spaceHandler() {
+    this.selectHandler();
+    if (!this.options.spaceAfterInsert)
+      this.quill.insertText(this.cursorPos, ' ');
   }
 
   selectHandler() {
@@ -276,9 +282,6 @@ class Mention {
 
     if (!programmaticInsert) {
       insertAtPos = this.mentionCharPos;
-      if (isMentionCharWhiteSpace(render.denotationChar) && insertAtPos != 0) {
-        insertAtPos += 1;
-      }
       this.quill.deleteText(
         insertAtPos,
         this.cursorPos - insertAtPos,
@@ -289,7 +292,7 @@ class Mention {
     }
 
     if (this.options.blotName == 'text') {
-      var text = render.value;
+      var text = insertAtPos != 0 ? render.denotationChar + render.value : render.value;
       this.quill.insertText(insertAtPos, text, this.deltaAttributes, Quill.sources.USER);
       insertAtPos += text.length - 1;
     } else {
