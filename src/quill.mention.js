@@ -285,16 +285,19 @@ class Mention {
       this.quill.deleteText(
         insertAtPos,
         this.cursorPos - insertAtPos,
-        Quill.sources.USER
+        Quill.sources.API // So that no callback is run
       );
     } else {
       insertAtPos = this.cursorPos;
     }
 
     if (this.options.blotName == 'text') {
-      var text = insertAtPos != 0 ? render.denotationChar + render.value : render.value;
-      this.quill.insertText(insertAtPos, text, this.deltaAttributes, Quill.sources.USER);
-      insertAtPos += text.length - 1;
+      if (insertAtPos != 0 && render.denotationChar) {
+        this.quill.insertText(insertAtPos, render.denotationChar, this.deltaAttributes, Quill.sources.API);
+        insertAtPos += 1;
+      }
+      this.quill.insertText(insertAtPos, render.value, this.deltaAttributes, Quill.sources.USER);
+      insertAtPos += render.value.length - 1;
     } else {
       this.quill.insertEmbed(insertAtPos, this.options.blotName, render, Quill.sources.USER);
     }
