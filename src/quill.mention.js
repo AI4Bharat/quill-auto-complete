@@ -31,6 +31,9 @@ class Mention {
       renderItem(item) {
         return `${item.value}`;
       },
+      renderItemWithIndex(item, index) {
+        return `${index}. ${item.value}`;
+      },
       renderLoading() {
         return null;
       },
@@ -143,6 +146,17 @@ class Mention {
       },
       this.downHandler.bind(this)
     );
+
+    if (this.options.numberList) {
+      for (var i = 1; i < 10; ++i) {
+        quill.keyboard.addBinding(
+          {
+            key: i.toString()
+          },
+          this.numberHandler.bind(this, i-1)
+        );
+      }
+    }
   }
 
   spaceHandler() {
@@ -184,6 +198,20 @@ class Mention {
       return false;
     }
     return true;
+  }
+
+  numberHandler(index) {
+    if (!this.isOpen) {
+      return true;
+    }
+    if (this.values && index <= this.values.length) {
+      this.itemIndex = index;
+      this.highlightItem();
+      this.selectHandler();
+      return false;
+    } else {
+      return true;
+    }
   }
 
   showMentionList() {
@@ -396,7 +424,11 @@ class Mention {
           initialSelection = i;
         }
         li.dataset.index = i;
-        li.innerHTML = this.options.renderItem(data[i], searchTerm);
+        if (this.options.numberList) {
+          li.innerHTML = this.options.renderItemWithIndex(data[i], i+1, searchTerm);
+        } else {
+          li.innerHTML = this.options.renderItem(data[i], searchTerm);
+        }
         if (!data[i].disabled) {
           li.onmouseenter = this.onItemMouseEnter.bind(this);
           li.onmouseup = this.onItemClick.bind(this);
