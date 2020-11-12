@@ -306,28 +306,33 @@ class Mention {
       render.denotationChar = "";
     }
 
-    var insertAtPos;
+    // Insert the text first at the current cursor position
+    if (this.options.blotName == 'text') {
+      this.quill.insertText(this.cursorPos, render.value, Quill.sources.API);
+    } else {
+      this.quill.insertEmbed(this.cursorPos, this.options.blotName, render, Quill.sources.API);
+    }
 
+    var insertAtPos; // Find where to place the cursor after insertion
     if (!programmaticInsert) {
       insertAtPos = this.mentionCharPos;
+      if (this.options.blotName == 'text' && this.quill.getText(insertAtPos, 1) == render.denotationChar) {
+        // Don't delete mention character if already there
+        if (insertAtPos != 0)
+          insertAtPos += 1;
+      }
+      // Delete the actual text that is to be replaced
       this.quill.deleteText(
         insertAtPos,
         this.cursorPos - insertAtPos,
-        Quill.sources.API // So that no callback is run
+        Quill.sources.USER
       );
     } else {
       insertAtPos = this.cursorPos;
     }
 
     if (this.options.blotName == 'text') {
-      if (insertAtPos != 0 && render.denotationChar) {
-        this.quill.insertText(insertAtPos, render.denotationChar, this.deltaAttributes, Quill.sources.API);
-        insertAtPos += 1;
-      }
-      this.quill.insertText(insertAtPos, render.value, this.deltaAttributes, Quill.sources.USER);
       insertAtPos += render.value.length - 1;
-    } else {
-      this.quill.insertEmbed(insertAtPos, this.options.blotName, render, Quill.sources.USER);
     }
 
     if (this.options.spaceAfterInsert) {
@@ -762,18 +767,6 @@ class Mention {
   }
 
   onTextChange(delta, oldDelta, source) {
-    if (this.options.blotName == 'text') {
-      this.deltaAttributes = {};
-      const ops = oldDelta["ops"];
-      if (delta["ops"]) {
-        for (i = 0; i < ops.length; i++) {
-          if (ops[i]["attributes"]) {
-            this.deltaAttributes = ops[i]["attributes"];
-            break;
-          }
-        }
-      }
-    }
     if (source === "user") {
       this.onSomethingChange();
     }
